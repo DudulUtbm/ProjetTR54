@@ -1,4 +1,4 @@
-package fr.utbm.tr54;
+package fr.utbm.tr54.robot;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.MotorPort;

@@ -1,4 +1,4 @@
-package fr.utbm.tr54;
+package fr.utbm.tr54.robot;
 
 public enum Color {
 		WHITE,

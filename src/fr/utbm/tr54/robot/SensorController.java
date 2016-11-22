@@ -1,4 +1,4 @@
-package fr.utbm.tr54;
+package fr.utbm.tr54.robot;
 
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.port.SensorPort;
