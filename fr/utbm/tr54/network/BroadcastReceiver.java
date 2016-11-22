@@ -1,4 +1,4 @@
-package lejos.network;
+package fr.utbm.tr54.network;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

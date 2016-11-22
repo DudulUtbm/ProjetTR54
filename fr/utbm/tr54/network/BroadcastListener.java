@@ -1,4 +1,4 @@
-package lejos.network;
+package fr.utbm.tr54.network;
 
 /**
  * Broadcast listener interface
