@@ -1,4 +1,4 @@
-package fr.utbm.tr54;
+package fr.utbm.tr54.robot;
 
 /**
  * Use checkColor to update the color and then is"Color" to get a boolean 

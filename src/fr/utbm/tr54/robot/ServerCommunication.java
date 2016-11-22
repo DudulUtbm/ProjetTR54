@@ -1,4 +1,4 @@
-package fr.utbm.tr54;
+package fr.utbm.tr54.robot;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
