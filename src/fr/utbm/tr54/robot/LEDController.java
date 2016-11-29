@@ -1,8 +1,5 @@
 package fr.utbm.tr54.robot;
 import lejos.hardware.Button;
-import lejos.hardware.lcd.LCD;
-
-
 
 class LEDController{
 	
@@ -33,7 +30,7 @@ class LEDController{
 		Button.LEDPattern(LEDController.YELLOW);
 	}
 	
-	public static void switchGeen(){
+	public static void switchGreen(){
 		Button.LEDPattern(LEDController.GREEN);	
 	}
 	

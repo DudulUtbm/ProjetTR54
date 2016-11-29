@@ -58,7 +58,7 @@ public class RGBsample {
 	
 	void checkColor(){
 		if(this.red>0.10){
-			if(this.green>0.15){
+			if(this.green>0.10 || this.blue>0.05){
 				color=Color.WHITE;
 			}else{
 				color=Color.ORANGE;
