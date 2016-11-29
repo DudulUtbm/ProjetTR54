@@ -15,13 +15,13 @@ public class RobocomLeader {
 		Pilot.init(75, 30, 65);
 		Delay.msDelay(500);
 
-		ServerCommunication.init();
-		ServerCommunication.setRawData(0, 0);
-		ServerCommunication.connect();
+//		ServerCommunication.init();
+//		ServerCommunication.setRawData(0, 0);
+//		ServerCommunication.connect();
 		
 		while (true) {
-			ServerCommunication.setRawData(Pilot.MAIN_SPEED, Pilot.POSITION);
-			ServerCommunication.send();
+//			ServerCommunication.setRawData(Pilot.MAIN_SPEED, Pilot.POSITION);
+//			ServerCommunication.send();
 		}
 	}
 }

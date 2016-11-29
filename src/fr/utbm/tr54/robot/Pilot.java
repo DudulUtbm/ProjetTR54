@@ -25,7 +25,12 @@ public class Pilot {
 	public static int OPPOSITE_TURN_SPEED;
 
 
-
+/**
+ * all parameters are linked. 75,30,65 is our base value. If you want to change one of them you have to also change the others
+ * @param speed, 
+ * @param turn_speed
+ * @param opposite_turn_speed
+ */
 public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 		motor_left = new EV3LargeRegulatedMotor(MotorPort.B);
@@ -41,13 +46,6 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 		distance_sensor = new EV3UltrasonicSensor(SensorPort.S2);
 		distance_provider = distance_sensor.getDistanceMode();
 		
-
-		//distance_sensor = new EV3UltrasonicSensor(SensorPort.S3);
-		//distance_provider = distance_sensor.getDistanceMode();
-
-		//color_sensor = new EV3ColorSensor(SensorPort.S2);
-		//color_provider = color_sensor.getRGBMode();
-		//color_sensor.setFloodlight(0);
 		set_speed(MAIN_SPEED);
 
 	}
@@ -57,7 +55,6 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
         float[] sample = new float[distance_provider.sampleSize()];
 
 		distance_provider.fetchSample(sample, 0);
-
 		return sample[0];
 
 	}
@@ -83,9 +80,6 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 		return sample;
 
 	}
-
-
-
 
 
 	public static void forward(){
