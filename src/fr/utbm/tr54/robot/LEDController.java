@@ -21,26 +21,38 @@ class LEDController{
 	public static int FB_RED=8;
 	public static int FB_YELLOW=9;
 	
+	private static Color currentLEDColor = Color.BLACK;
+	private static Color previousLEDColor = Color.BLACK;
+	
 	
 	public static void switchRed(){
+		previousLEDColor = currentLEDColor;
 		Button.LEDPattern(LEDController.RED);
+		currentLEDColor=Color.RED;
 	}
 	
 	public static void switchOrange(){
+		previousLEDColor = currentLEDColor;
 		Button.LEDPattern(LEDController.YELLOW);
+		currentLEDColor=Color.ORANGE;
 	}
 	
 	public static void switchGreen(){
-		Button.LEDPattern(LEDController.GREEN);	
+		previousLEDColor = currentLEDColor;
+		Button.LEDPattern(LEDController.GREEN);
+		currentLEDColor=Color.GREEN;
 	}
 	
 	public static void blinkRed(){
+		previousLEDColor = currentLEDColor;
 		Button.LEDPattern(LEDController.B_RED);
+		currentLEDColor=Color.BLINKING_RED;
 	}
 	
 	public static void switchOff(){
-		
+		previousLEDColor = currentLEDColor;
 		Button.LEDPattern(LEDController.OFF);
+		currentLEDColor=Color.BLACK;
 		
 	}
 	
