@@ -17,7 +17,7 @@ public class MainTest {
 	
 	public static void main(String[] args) throws IOException {
 		
-		Pilot.init(75, 30, 65);
+		Pilot.init(60, 23, 40);
 
 		SensorController sControl = new SensorController();
     
