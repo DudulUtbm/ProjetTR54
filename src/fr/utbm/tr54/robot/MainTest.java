@@ -14,11 +14,12 @@ import lejos.utility.Delay;
  *
  */
 public class MainTest {
-	
+
 	private static boolean isOrange=false;
 	private static Color prevColor;
 	
 	
+
 	public static void main(String[] args) throws IOException {
 		
 		Pilot.init(50, 18, 32);
@@ -62,8 +63,7 @@ public class MainTest {
 						
 					}else if(sControl.sample.isOrange()){
 						Pilot.forward();
-		
-						
+
 						if(!isOrange && prevColor != Color.ORANGE){
 							LEDController.switchOrange();
 							isOrange = true;
@@ -71,7 +71,7 @@ public class MainTest {
 							LEDController.switchGreen();
 							isOrange = false;
 						}
-						
+		
 						prevColor = Color.ORANGE;
 
 					}else{

@@ -18,8 +18,6 @@ public class SensorController implements Runnable {
 	SampleProvider colorMode;
 	
 	public RGBsample sample;
-	
-	public float currentPosition;
 
 	/**
 	 * Constructor that assign port S2 to RGBsensor
@@ -69,18 +67,7 @@ public class SensorController implements Runnable {
 		}
 		
 	}
-	
-	public void updatePosition(){
-		if(sample.isOrange()){
-			currentPosition = 0;
-		}
 		
-		
-	}
-	
-	public float getCurrentPosition(){
-		return currentPosition;
-	}
 	public void start(){
 		if(sensorThread==null){
 			sensorThread= new Thread(this);
