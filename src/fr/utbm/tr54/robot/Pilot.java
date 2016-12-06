@@ -170,10 +170,7 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 	}
 	
-	//TODO: add a parameter in pilot that count the number of turn and check here
-	//if we are over or less than a reference value that we will define by testing on the track.
-	public static boolean wait(){
-		return true;
-	}
+
+
 
 }
