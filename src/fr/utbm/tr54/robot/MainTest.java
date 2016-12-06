@@ -13,8 +13,9 @@ import fr.utbm.tr54.network.BroadcastManager;
 import fr.utbm.tr54.network.BroadcastReceiver;
 import lejos.hardware.Brick;
 import lejos.hardware.BrickFinder;
-import lejos.hardware.BrickInfo;
+import lejos.hardware.Button;
 import lejos.utility.Delay;
+
 
 /**
  * Follow the track and stop before hitting obstacles (other robot)
@@ -27,12 +28,24 @@ public class MainTest {
 	private static Color prevColor;
 	private static Brick brick;
 	private static MessageListener msgListener;
-	
+	private static boolean wait;
 
 	public static void main(String[] args) throws IOException {
+		wait = false;
 		brick = BrickFinder.getLocal();
+	 	final int button = Button.waitForAnyPress();
+		boolean menu = true;
 		
-		msgListener = new MessageListener(brick.getName(),isOrange);
+		while (menu){
+			if(button == Button.ID_UP) {
+				msgListener = new MessageListener(brick.getName(),true);
+				menu = false;
+			} else if(button == Button.ID_DOWN) {
+				msgListener = new MessageListener(brick.getName(),false);
+				menu = false;
+			}
+		}
+		
 		BroadcastReceiver.getInstance().addListener(msgListener);
 		
 		Pilot.init(50, 18, 32);
@@ -42,12 +55,50 @@ public class MainTest {
 		SensorController sControl = new SensorController();
 	 	sControl.start();
 	 	LEDController.switchRed();
-
+	 	
+	 	
 		Delay.msDelay(500);
 
 		while(true){
-			while(prevColor == sControl.sample.getColor());
-			if(Pilot.distance(5) < 0.20f){
+			
+			if(msgListener.isWaiting){
+				if(msgListener.isCrossing){
+					msgListener.isWaiting = false;
+					wait = false;
+				} else {
+					//this function needs to be done : count number of wheels turn since orange mark is crossed
+					//until a reference then return false which will trigger "stop" in the next condition
+					wait = Pilot.wait();
+				}
+			}
+			if(msgListener.isCrossing){
+				if(System.currentTimeMillis() - msgListener.crossingTime > 5000){
+					msgListener.currentRoute = !msgListener.currentRoute;
+					msgListener.crossingTime = 0;
+					msgListener.isCrossing = false;
+					JSONObject obj = new JSONObject();
+					try{
+						obj.put("name", msgListener.name);
+						obj.put("isCrossing",false);
+						obj.put("isWaiting", false);
+						obj.put("currentRoute", msgListener.currentRoute);
+						obj.put("crossRequest", false);
+						//first message sent for crossing the road
+						BroadcastManager.getInstance().broadcast(obj.toString().getBytes());
+					}catch(Exception e){
+						
+					}
+				}
+			}
+			//remove duplicate color detection
+			//we need to continue checking the distance even though color is the same
+			while(prevColor == sControl.sample.getColor()){
+				if(Pilot.distance(5) < 0.20f || wait){
+					Pilot.stop();
+					break;
+				}
+			}
+			if(Pilot.distance(5) < 0.20f || wait){
 				Pilot.stop();
 		
 			}else if (Pilot.distance(5) >= 0.20f){
@@ -85,6 +136,7 @@ public class MainTest {
 								obj.put("isCrossing",false);
 								obj.put("isWaiting", false);
 								obj.put("currentRoute", msgListener.currentRoute);
+								obj.put("crossRequest", true);
 								//first message sent for crossing the road
 								BroadcastManager.getInstance().broadcast(obj.toString().getBytes());
 							}catch(Exception e){
@@ -93,6 +145,18 @@ public class MainTest {
 						}else if (isOrange && prevColor != Color.ORANGE){
 							LEDController.switchGreen();
 							isOrange = false;
+							JSONObject obj = new JSONObject();
+							try{
+								obj.put("name", msgListener.name);
+								obj.put("isCrossing",false);
+								obj.put("isWaiting", false);
+								obj.put("currentRoute", msgListener.currentRoute);
+								obj.put("crossRequest", true);
+								//first message sent for crossing the road
+								BroadcastManager.getInstance().broadcast(obj.toString().getBytes());
+							}catch(Exception e){
+								
+							}
 							
 						}
 		
