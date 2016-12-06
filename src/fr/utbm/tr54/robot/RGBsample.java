@@ -7,11 +7,11 @@ package fr.utbm.tr54.robot;
  */
 public class RGBsample {
 	
-	float red;
-	float green;
-	float blue;
+	private float red;
+	private float green;
+	private float blue;
 
-	Color color;
+	private Color color;
 	
 	/**
 	 * 

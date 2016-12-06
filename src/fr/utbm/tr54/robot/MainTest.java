@@ -6,6 +6,14 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+import org.json.JSONObject;
+
+import fr.utbm.tr54.network.BroadcastListener;
+import fr.utbm.tr54.network.BroadcastManager;
+import fr.utbm.tr54.network.BroadcastReceiver;
+import lejos.hardware.Brick;
+import lejos.hardware.BrickFinder;
+import lejos.hardware.BrickInfo;
 import lejos.utility.Delay;
 
 /**
@@ -17,24 +25,28 @@ public class MainTest {
 
 	private static boolean isOrange=false;
 	private static Color prevColor;
-	
+	private static Brick brick;
+	private static MessageListener msgListener;
 	
 
 	public static void main(String[] args) throws IOException {
+		brick = BrickFinder.getLocal();
+		
+		msgListener = new MessageListener(brick.getName(),isOrange);
+		BroadcastReceiver.getInstance().addListener(msgListener);
 		
 		Pilot.init(50, 18, 32);
 
 		LEDController.switchOff();
 
 		SensorController sControl = new SensorController();
-    
 	 	sControl.start();
 	 	LEDController.switchRed();
 
 		Delay.msDelay(500);
 
 		while(true){
-
+			while(prevColor == sControl.sample.getColor());
 			if(Pilot.distance(5) < 0.20f){
 				Pilot.stop();
 		
@@ -67,9 +79,21 @@ public class MainTest {
 						if(!isOrange && prevColor != Color.ORANGE){
 							LEDController.switchOrange();
 							isOrange = true;
+							JSONObject obj = new JSONObject();
+							try{
+								obj.put("name", msgListener.name);
+								obj.put("isCrossing",false);
+								obj.put("isWaiting", false);
+								obj.put("currentRoute", msgListener.currentRoute);
+								//first message sent for crossing the road
+								BroadcastManager.getInstance().broadcast(obj.toString().getBytes());
+							}catch(Exception e){
+								
+							}
 						}else if (isOrange && prevColor != Color.ORANGE){
 							LEDController.switchGreen();
 							isOrange = false;
+							
 						}
 		
 						prevColor = Color.ORANGE;
@@ -84,4 +108,6 @@ public class MainTest {
 
 		}
 	}
+
+
 }
