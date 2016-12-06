@@ -33,6 +33,10 @@ public class RGBsample {
 		return color==Color.WHITE;
 	}
 	
+	public Color getColor(){
+		return this.color;
+	}
+	
 	public boolean isBlack(){
 		
 		return color==Color.BLACK;

@@ -25,10 +25,13 @@ class LEDController{
 	private static Color previousLEDColor = Color.BLACK;
 	
 	
+	
 	public static void switchRed(){
 		previousLEDColor = currentLEDColor;
 		Button.LEDPattern(LEDController.RED);
+
 		currentLEDColor=Color.RED;
+
 	}
 	
 	public static void switchOrange(){
