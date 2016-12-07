@@ -24,31 +24,36 @@ import lejos.utility.Delay;
  */
 public class MainTest {
 
-	private static boolean isOrange=false;
+	private static boolean currentRoute=false;
 	private static Color prevColor;
 	private static Brick brick;
 	private static MessageListener msgListener;
 	private static boolean wait;
+	private static long startTime;
+	private static long lastOrangeDetectionTime;
 
 	public static void main(String[] args) throws IOException {
+		
+		startTime = System.currentTimeMillis();
 		wait = false;
 		brick = BrickFinder.getLocal();
-	 	final int button = Button.waitForAnyPress();
-		boolean menu = true;
+		lastOrangeDetectionTime = System.currentTimeMillis();
+	 	//final int button = Button.waitForAnyPress();
+		boolean menu = false;
 		
-		while (menu){
-			if(button == Button.ID_UP) {
-				msgListener = new MessageListener(brick.getName(),true);
-				menu = false;
-			} else if(button == Button.ID_DOWN) {
-				msgListener = new MessageListener(brick.getName(),false);
-				menu = false;
-			}
-		}
-		
+//		while (menu){
+//			if(button == Button.ID_UP) {
+//				msgListener = new MessageListener(brick.getName(),true);
+//				menu = false;
+//			} else if(button == Button.ID_DOWN) {
+//				msgListener = new MessageListener(brick.getName(),false);
+//				menu = false;
+//			}
+//		}
+		msgListener = new MessageListener(brick.getName(),true);
 		BroadcastReceiver.getInstance().addListener(msgListener);
-		
-		Pilot.init(50, 18, 32);
+		BroadcastManager.getInstance().broadcast("{'name' : 'INIT'}".getBytes());
+		Pilot.init(50,38,15);
 
 		LEDController.switchOff();
 
@@ -57,111 +62,62 @@ public class MainTest {
 	 	LEDController.switchRed();
 	 	
 	 	
-		Delay.msDelay(500);
+		//Delay.msDelay(500);
+	 	
 
 		while(true){
 			
-			if(msgListener.isWaiting){
-				if(msgListener.isCrossing){
-					msgListener.isWaiting = false;
-					wait = false;
-				} else {
-					//this function needs to be done : count number of wheels turn since orange mark is crossed
-					//until a reference then return false which will trigger "stop" in the next condition
-					wait = Pilot.wait();
-				}
-			}
-			if(msgListener.isCrossing){
-				if(System.currentTimeMillis() - msgListener.crossingTime > 5000){
-					msgListener.currentRoute = !msgListener.currentRoute;
-					msgListener.crossingTime = 0;
-					msgListener.isCrossing = false;
-					JSONObject obj = new JSONObject();
-					try{
-						obj.put("name", msgListener.name);
-						obj.put("isCrossing",false);
-						obj.put("isWaiting", false);
-						obj.put("currentRoute", msgListener.currentRoute);
-						obj.put("crossRequest", false);
-						//first message sent for crossing the road
-						BroadcastManager.getInstance().broadcast(obj.toString().getBytes());
-					}catch(Exception e){
-						
-					}
-				}
-			}
-			//remove duplicate color detection
-			//we need to continue checking the distance even though color is the same
-			while(prevColor == sControl.sample.getColor()){
-				if(Pilot.distance(5) < 0.20f || wait){
-					Pilot.stop();
-					break;
-				}
-			}
-			if(Pilot.distance(5) < 0.20f || wait){
+
+			
+		
+			if(Pilot.distance(5) < 0.20f ){
 				Pilot.stop();
 		
 			}else if (Pilot.distance(5) >= 0.20f){
 				
 				if(sControl.sample.isBlue()){
-					prevColor = Color.BLUE;
-					//LEDController.switchGreen();
+					//prevColor = Color.BLUE;
 					Pilot.forward();
 				}else{
-					Pilot.set_speed(60);
 					
 					if(sControl.sample.isWhite()){
-						prevColor = Color.WHITE;
+						//prevColor = Color.WHITE;
 						Pilot.turn_right();
-						while(sControl.sample.isWhite()){
-							Pilot.turn_right();
-						}
-						
+
 					}else if(sControl.sample.isBlack()){
-						prevColor = Color.BLACK;
+						//prevColor = Color.BLACK;
 						Pilot.turn_left();
-						while(sControl.sample.isBlack()){
-							Pilot.turn_left();
-						}
 						
 					}else if(sControl.sample.isOrange()){
-						Pilot.forward();
-
-						if(!isOrange && prevColor != Color.ORANGE){
-							LEDController.switchOrange();
-							isOrange = true;
+						Pilot.slow_forward();
+						
+						if( System.currentTimeMillis() - lastOrangeDetectionTime > 3000){
+							
 							JSONObject obj = new JSONObject();
-							try{
-								obj.put("name", msgListener.name);
-								obj.put("isCrossing",false);
-								obj.put("isWaiting", false);
-								obj.put("currentRoute", msgListener.currentRoute);
-								obj.put("crossRequest", true);
-								//first message sent for crossing the road
-								BroadcastManager.getInstance().broadcast(obj.toString().getBytes());
-							}catch(Exception e){
-								
-							}
-						}else if (isOrange && prevColor != Color.ORANGE){
-							LEDController.switchGreen();
-							isOrange = false;
-							JSONObject obj = new JSONObject();
-							try{
-								obj.put("name", msgListener.name);
-								obj.put("isCrossing",false);
-								obj.put("isWaiting", false);
-								obj.put("currentRoute", msgListener.currentRoute);
-								obj.put("crossRequest", true);
-								//first message sent for crossing the road
-								BroadcastManager.getInstance().broadcast(obj.toString().getBytes());
-							}catch(Exception e){
-								
+							
+							if (msgListener.currentRoute) {
+								LEDController.switchOrange();
+							} else {
+								LEDController.switchGreen();
 							}
 							
+							try {
+								obj.put("name", msgListener.name);
+								obj.put("isCrossing",false);
+								obj.put("isWaiting", false);
+								obj.put("currentRoute", msgListener.currentRoute);
+								obj.put("crossRequest", true);
+								
+								//message sent for crossing the road
+								BroadcastManager.getInstance().broadcast(obj.toString().getBytes());
+								
+							} catch (Exception e) {
+								
+							}
 						}
-		
-						prevColor = Color.ORANGE;
-
+						
+						lastOrangeDetectionTime = System.currentTimeMillis();
+						
 					}else{
 						Pilot.set_speed(50);
 					}

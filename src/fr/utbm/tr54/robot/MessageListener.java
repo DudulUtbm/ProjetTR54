@@ -35,8 +35,13 @@ public class MessageListener implements BroadcastListener {
 		// TODO Auto-generated method stub
 		String messageS = new String(message);
 		JSONObject obj = new JSONObject (messageS);
-		if(obj.getString("name") == this.name)
-			this.update(obj);
+		try{
+			if(obj.get("name") != null && obj.getString("name") == this.name)
+				this.update(obj);
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		
 	}
 
 }
