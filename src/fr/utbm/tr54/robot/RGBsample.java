@@ -61,12 +61,21 @@ public class RGBsample {
 //	}
 	
 	void checkColor(){
+		
 		if(this.red>0.10){
-			if(this.green>0.10 || this.blue>0.05){
-				color=Color.WHITE;
+			
+			if(
+				this.red >= 0.20 && this.red < 0.394
+				&&
+				this.green >= 0.054 && this.green < 0.085
+				&&
+				this.blue >= 0.012 && this.blue < 0.028){
+				
+					color = Color.ORANGE;
 			}else{
-				color=Color.ORANGE;
+				color=Color.WHITE;
 			}
+		
 		}else{
 			if(this.green>0.07){
 				color=Color.BLUE;
@@ -75,11 +84,16 @@ public class RGBsample {
 			}
 		}		
 	}
-	
+	//Orange :0.21-0.394 / 0.055-0.085 / 0.013-0.028
 	//Blanc : 0.20-0.25 0.20-0.25 0.9-0.11
 	//Noir : 0.02-0.03 0.03-0.04 0.006-0.008
 	//Bleu : 0.04 0.10-0.11 0.09
-	//Orange : 0.15-0.25 0.05 0.01
+	
+	
+
+	
+	
+
 	
 
 

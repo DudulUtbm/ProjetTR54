@@ -92,23 +92,14 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 		motor_left.endSynchronization();
 
 	}
-
-	public static void turn_left(){
+	
+	public static void slow_forward(){
 
 		motor_left.startSynchronization();
-
-		motor_left.setSpeed((motor_left.getMaxSpeed()*TURN_SPEED)/100);
-		motor_left.forward();
-		
-		motor_left.setSpeed((motor_left.getMaxSpeed()*OPPOSITE_TURN_SPEED)/100);
+		motor_left.setSpeed((int) ((motor_left.getMaxSpeed()*MAIN_SPEED/1.4)/100));
+		motor_right.setSpeed((int) ((motor_right.getMaxSpeed()*MAIN_SPEED/1.4)/100));
 		motor_right.forward();
-		//motor_right.setSpeed((motor_right.getMaxSpeed()*TURN_SPEED)/100);
-
-		//motor_right.forward();
-		//motor_left.stop();
-
-
-
+		motor_left.forward();
 		motor_left.endSynchronization();
 
 	}
@@ -117,12 +108,24 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 		motor_left.startSynchronization();
 
-		//motor_left.setSpeed((motor_left.getMaxSpeed()*TURN_SPEED)/100);
+		motor_left.setSpeed((motor_left.getMaxSpeed()*TURN_SPEED)/100);
+		motor_left.forward();
+		
+		motor_right.setSpeed((motor_right.getMaxSpeed()*OPPOSITE_TURN_SPEED)/100);
+		motor_right.forward();
+
+		motor_left.endSynchronization();
+
+	}
+
+	public static void turn_left(){
+
+		motor_left.startSynchronization();
+
 		motor_right.setSpeed((motor_right.getMaxSpeed()*TURN_SPEED)/100);
 		motor_right.forward();
 
-		//motor_right.stop();
-		motor_right.setSpeed((motor_right.getMaxSpeed()*OPPOSITE_TURN_SPEED)/100);
+		motor_left.setSpeed((motor_left.getMaxSpeed()*OPPOSITE_TURN_SPEED)/100);
 		motor_left.forward();
 		
 		motor_left.endSynchronization();
@@ -144,7 +147,6 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 		motor_right.backward();
 		motor_left.backward();
 		motor_left.endSynchronization();
-
 
 	}
 
@@ -169,11 +171,25 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 		motor_left.endSynchronization();
 
 	}
+
+	/**
+	 * we always use leftmotor for counting
+	 */
+	public static void resetWheelTurn() {
+		motor_left.resetTachoCount();	
+	}
+	
+	public static int getWheelTurn(){
+		return motor_left.getTachoCount();
+	}
 	
 	//TODO: add a parameter in pilot that count the number of turn and check here
 	//if we are over or less than a reference value that we will define by testing on the track.
-	public static boolean wait(){
-		return true;
+	public static boolean waiting(){
+		
+		return motor_left.getTachoCount() >= 900;
+				
+		
 	}
 
 }

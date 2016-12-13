@@ -40,9 +40,14 @@ public class SensorController implements Runnable {
 	 * 
 	 * @param item
 	 */
-	void printLCD(float item,int x,int y) {
+	public void printLCD(float item,int x,int y) {
 		LCD.clear();
 		LCD.drawString(Float.toString(item), x, y);
+	}
+	
+	public void printLCD(String string, int x, int y) {
+		LCD.clear();
+		LCD.drawString(string, x, y);
 	}
 
 
