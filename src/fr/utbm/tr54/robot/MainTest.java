@@ -9,6 +9,7 @@ import fr.utbm.tr54.network.BroadcastReceiver;
 import lejos.hardware.Brick;
 import lejos.hardware.BrickFinder;
 import lejos.hardware.Button;
+import lejos.hardware.lcd.LCD;
 import lejos.utility.Delay;
 
 
@@ -19,14 +20,11 @@ import lejos.utility.Delay;
  */
 public class MainTest {
 
-	private static boolean currentRoute=false;
 	private static Brick brick;
 	private static MessageListener msgListener;
-	private static boolean wait;
 
 	public static void main(String[] args) throws IOException {
 		
-		wait = false;
 		brick = BrickFinder.getLocal();
 		
 		SensorController sControl = new SensorController();
@@ -48,18 +46,13 @@ public class MainTest {
 			}
 		}
 		
-		msgListener = new MessageListener(brick.getName(),true);
-		sControl.printLCD("my name is :", 1, 1);
-		sControl.printLCD(brick.getName(), 2, 2);
+		//msgListener = new MessageListener(brick.getName(),true);
+		sControl.printLCD(brick.getName(), 1, 1);
 		BroadcastReceiver.getInstance().addListener(msgListener);
-		BroadcastManager.getInstance().broadcast("{'name' : 'INIT'}".getBytes());
 		Pilot.init(50,38,15);
-	 	
-	 	
-		Delay.msDelay(500);
 
 		while(true){
-			
+			displayStatus(); //debug method                               
 			//debug display
 //			JSONObject objDebug = new JSONObject();
 //			try{
@@ -73,39 +66,33 @@ public class MainTest {
 //			}
 			//end debug
 			
-			if(msgListener.isWaiting){
-				if(msgListener.isCrossing){
-					msgListener.isWaiting = false;
-					wait = false;
-				} else {
-					//this function needs to be done : count number of wheels turn since orange mark is crossed
-					//until a reference then return false which will trigger "stop" in the next condition
-					wait = Pilot.waiting();
-				}
-			}
+//			if(msgListener.isWaiting){
+//				if(msgListener.isCrossing){
+//					msgListener.isWaiting = false;
+//					wait = false;
+//				} else {
+//					//this function needs to be done : count number of wheels turn since orange mark is crossed
+//					//until a reference then return false which will trigger "stop" in the next condition
+//					
+//				}
+//			}
+			
 			if(msgListener.isCrossing){
 				if(Pilot.getWheelTurn()>2500){
 					msgListener.currentRoute = !msgListener.currentRoute;
 					msgListener.isCrossing = false;
 					msgListener.isWaiting = false;
-					JSONObject obj = new JSONObject();
-					try{
-						obj.put("name", msgListener.name);
-						obj.put("isCrossing",msgListener.isCrossing);
-						obj.put("isWaiting", msgListener.isWaiting);
-						obj.put("currentRoute", msgListener.currentRoute);
-						obj.put("crossRequest", false);
-						//first message sent for crossing the road
-						BroadcastManager.getInstance().broadcast(obj.toString().getBytes());
-						LEDController.switchOff();
-					}catch(Exception e){
-						
-					}
+					sendMessage(false);
+					LEDController.switchOff();
 				}
 			}
 			
-			if(Pilot.distance(5) < 0.20f || wait ){
+			if(Pilot.distance(5) < 0.20f){
 				Pilot.stop();
+			}else if(msgListener.isWaiting	&& Pilot.waiting()){
+				Pilot.stop();
+				sendMessage(true); //request again
+				Delay.msDelay(1000);
 		
 			}else if (Pilot.distance(5) >= 0.20f){
 				
@@ -124,40 +111,17 @@ public class MainTest {
 						
 					}else if(sControl.sample.isOrange()){ //the robot drive on the orange token
 						Pilot.slow_forward();
-						Pilot.resetWheelTurn();
+						
 						
 						if(Pilot.getWheelTurn()>500){
+							Pilot.resetWheelTurn();
 							
-							JSONObject obj = new JSONObject();
+							//msgListener.isWaiting = true;
+							sendMessage(true); //first message
+							LEDController.blinkRed();
 							
-//							if (currentRoute) {
-//								LEDController.switchOrange();
-//							} else {
-//								LEDController.switchGreen();
-//							}
-							currentRoute = !currentRoute;
-							
-							try {
-								msgListener.isCrossing = false;
-								msgListener.isWaiting = false;
-								obj.put("name", msgListener.name);
-								obj.put("isCrossing",msgListener.isCrossing);
-								obj.put("isWaiting", msgListener.isWaiting);
-								obj.put("currentRoute", msgListener.currentRoute);
-								obj.put("crossRequest", true);
-								
-								//message sent for crossing the road
-								BroadcastManager.getInstance().broadcast(obj.toString().getBytes());
-								LEDController.blinkRed();
-								msgListener.isWaiting = false;
-								
-							} catch (Exception e) {
-								
-							}
 						}
 						
-					}else{
-						Pilot.set_speed(50);
 					}
 
 				}
@@ -166,6 +130,32 @@ public class MainTest {
 			
 		}
 	}
+	
+	public static void sendMessage(boolean crossRequest){
+		JSONObject obj = new JSONObject();
+		try{
+			obj.put("name", msgListener.name);
+			obj.put("isCrossing",msgListener.isCrossing);
+			obj.put("isWaiting", msgListener.isWaiting);
+			obj.put("currentRoute", msgListener.currentRoute);
+			obj.put("crossRequest",crossRequest);
+			BroadcastManager.getInstance().broadcast(obj.toString().getBytes());
+		}catch(Exception e){
+			
+		}
+	}
+	
+	public static void displayStatus(){
+		LCD.clear();
+		LCD.drawString(msgListener.name,1,1);
+		LCD.drawString("Cross",1,2);
+		LCD.drawString(Boolean.toString(msgListener.isCrossing),7,2);
+		LCD.drawString("Wait",1,3);
+		LCD.drawString(Boolean.toString(msgListener.isWaiting),7,3);
+		LCD.drawString("Route",1,4);
+		LCD.drawString(Boolean.toString(msgListener.currentRoute),7,4);
+	}
+	
 
 
 }

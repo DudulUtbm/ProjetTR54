@@ -10,13 +10,12 @@ public class MessageListener implements BroadcastListener {
 	boolean currentRoute;
 	boolean isCrossing;
 	boolean isWaiting;
-	long crossingTime;
 	
 	public MessageListener(String name,boolean currentRoute){
 		this.name = name;
 		this.currentRoute = currentRoute;
 		this.isCrossing = false;
-		this.isWaiting = false;
+		this.isWaiting = false; //useless ?
 	}
 	
 	public void update(JSONObject obj){
@@ -25,11 +24,11 @@ public class MessageListener implements BroadcastListener {
 			this.currentRoute = obj.getBoolean("currentRoute");
 		if(obj.has("isCrossing"))
 			this.isCrossing = obj.getBoolean("isCrossing");
-		if(obj.has("isWaiting"))
+		if(obj.has("isWaiting")){
 			this.isWaiting = obj.getBoolean("isWaiting");
-		if(obj.getBoolean("isCrossing")){
-			crossingTime = System.currentTimeMillis();
+			if(this.isWaiting)LEDController.blinkOrange();
 		}
+			
 		switch(obj.getInt("position")){
 		case 1:
 			LEDController.switchGreen();

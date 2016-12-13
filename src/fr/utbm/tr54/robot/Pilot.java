@@ -96,8 +96,8 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 	public static void slow_forward(){
 
 		motor_left.startSynchronization();
-		motor_left.setSpeed((int) ((motor_left.getMaxSpeed()*MAIN_SPEED/1.4)/100));
-		motor_right.setSpeed((int) ((motor_right.getMaxSpeed()*MAIN_SPEED/1.4)/100));
+		motor_left.setSpeed((int) ((motor_left.getMaxSpeed()*MAIN_SPEED*0.4)/100));
+		motor_right.setSpeed((int) ((motor_right.getMaxSpeed()*MAIN_SPEED*0.4)/100));
 		motor_right.forward();
 		motor_left.forward();
 		motor_left.endSynchronization();
