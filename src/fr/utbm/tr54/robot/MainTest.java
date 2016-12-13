@@ -95,11 +95,12 @@ public class MainTest {
 							
 							JSONObject obj = new JSONObject();
 							
-							if (msgListener.currentRoute) {
+							if (currentRoute) {
 								LEDController.switchOrange();
 							} else {
 								LEDController.switchGreen();
 							}
+							currentRoute = !currentRoute;
 							
 							try {
 								obj.put("name", msgListener.name);
