@@ -22,6 +22,7 @@ public class MainTest {
 
 	private static Brick brick;
 	private static MessageListener msgListener;
+	private static boolean waitingServer = false;
 
 	public static void main(String[] args) throws IOException {
 		
@@ -52,7 +53,7 @@ public class MainTest {
 		Pilot.init(50,38,15);
 
 		while(true){
-			displayStatus(); //debug method                               
+			//displayStatus(); //debug method                               
 			//debug display
 //			JSONObject objDebug = new JSONObject();
 //			try{
@@ -78,6 +79,7 @@ public class MainTest {
 //			}
 			
 			if(msgListener.isCrossing){
+				waitingServer = false;
 				if(Pilot.getWheelTurn()>2500){
 					msgListener.currentRoute = !msgListener.currentRoute;
 					msgListener.isCrossing = false;
@@ -89,7 +91,7 @@ public class MainTest {
 			
 			if(Pilot.distance(5) < 0.20f){
 				Pilot.stop();
-			}else if(msgListener.isWaiting	&& Pilot.waiting()){
+			}else if((msgListener.isWaiting || waitingServer)	&& Pilot.waiting()){
 				Pilot.stop();
 				sendMessage(true); //request again
 				Delay.msDelay(1000);
@@ -118,7 +120,8 @@ public class MainTest {
 							
 							//msgListener.isWaiting = true;
 							sendMessage(true); //first message
-							LEDController.blinkRed();
+							waitingServer = true;
+							LEDController.blinkOrange();
 							
 						}
 						

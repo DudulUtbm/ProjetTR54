@@ -26,7 +26,7 @@ public class MessageListener implements BroadcastListener {
 			this.isCrossing = obj.getBoolean("isCrossing");
 		if(obj.has("isWaiting")){
 			this.isWaiting = obj.getBoolean("isWaiting");
-			if(this.isWaiting)LEDController.blinkOrange();
+			if(this.isWaiting)LEDController.blinkRed();
 		}
 			
 		switch(obj.getInt("position")){
