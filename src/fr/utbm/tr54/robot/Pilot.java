@@ -173,7 +173,7 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 	}
 
 	/**
-	 * we always use leftmotor for counting
+	 * we always use leftmotor for counting distance
 	 */
 	public static void resetWheelTurn() {
 		motor_left.resetTachoCount();	
