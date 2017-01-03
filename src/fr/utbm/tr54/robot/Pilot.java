@@ -117,6 +117,21 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 		motor_left.endSynchronization();
 
 	}
+	
+	
+	public static void slow_turn_right(){
+
+		motor_left.startSynchronization();
+
+		motor_left.setSpeed((motor_left.getMaxSpeed()*((float)(TURN_SPEED*0.65)))/100);
+		motor_left.forward();
+		
+		motor_right.setSpeed((motor_right.getMaxSpeed()*OPPOSITE_TURN_SPEED)/100);
+		motor_right.forward();
+
+		motor_left.endSynchronization();
+
+	}
 
 	public static void turn_left(){
 

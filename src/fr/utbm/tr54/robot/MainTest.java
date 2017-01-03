@@ -105,7 +105,11 @@ public class MainTest {
 					
 					if(sControl.sample.isWhite()){
 						//prevColor = Color.WHITE;
-						Pilot.turn_right();
+						if(msgListener.currentRoute == false){
+							Pilot.slow_turn_right();
+						}else {
+							Pilot.turn_right();
+						}
 
 					}else if(sControl.sample.isBlack()){
 						//prevColor = Color.BLACK;
