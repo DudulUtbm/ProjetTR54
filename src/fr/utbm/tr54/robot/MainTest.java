@@ -118,7 +118,7 @@ public class MainTest {
 						if(Pilot.getWheelTurn()>500){
 							Pilot.resetWheelTurn();
 							
-							//msgListener.isWaiting = true;
+							msgListener.isWaiting = true;
 							sendMessage(true); //first message
 							waitingServer = true;
 							LEDController.blinkOrange();
