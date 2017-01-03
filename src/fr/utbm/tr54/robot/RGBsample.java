@@ -65,11 +65,11 @@ public class RGBsample {
 		if(this.red>0.10){
 			
 			if(
-				this.red >= 0.20 && this.red < 0.394
-				&&
+//				this.red >= 0.20 && this.red < 0.394
+//				&&
 				this.green >= 0.054 && this.green < 0.085
 				&&
-				this.blue >= 0.012 && this.blue < 0.028){
+				this.blue >= 0.012 && this.blue < 0.035){
 				
 					color = Color.ORANGE;
 			}else{

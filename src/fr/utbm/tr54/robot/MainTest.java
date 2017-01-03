@@ -50,6 +50,7 @@ public class MainTest {
 		//msgListener = new MessageListener(brick.getName(),true);
 		sControl.printLCD(brick.getName(), 1, 1);
 		BroadcastReceiver.getInstance().addListener(msgListener);
+		BroadcastManager.getInstance().broadcast("{'name' : 'INIT'}".getBytes());
 		Pilot.init(50,38,15);
 
 		while(true){
@@ -76,8 +77,7 @@ public class MainTest {
 //					//until a reference then return false which will trigger "stop" in the next condition
 //					
 //				}
-//			}
-			
+//			}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 			if(msgListener.isCrossing){
 				waitingServer = false;
 				if(Pilot.getWheelTurn()>2500){
@@ -120,7 +120,7 @@ public class MainTest {
 							
 							msgListener.isWaiting = true;
 							sendMessage(true); //first message
-							waitingServer = true;
+							//waitingServer = true;
 							LEDController.blinkOrange();
 							
 						}

@@ -4,6 +4,7 @@ import lejos.hardware.lcd.LCD;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
+import lejos.utility.Delay;
 
 /**
  * Contains all functions needed to use a RGB color sensor.
