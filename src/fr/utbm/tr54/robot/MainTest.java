@@ -1,6 +1,5 @@
 package fr.utbm.tr54.robot;
 
-
 import java.io.IOException;
 import org.json.JSONObject;
 
@@ -14,8 +13,13 @@ import lejos.utility.Delay;
 
 
 /**
- * Follow the track and stop before hitting obstacles (other robot)
- * @author rdulieu
+ * 
+ * The main algorithm that run our robots.
+ * Follow the track and stop before hitting obstacles.
+ * When driving on an orange token the robot ask the server the permission to cross the intersection.
+ * Depending on the answer the LED's color will change and the robot'll either stop or cross the intersection.
+ * Each robot display his name on his screen.
+ * @author Rora
  *
  */
 public class MainTest {
@@ -24,15 +28,23 @@ public class MainTest {
 	private static MessageListener msgListener;
 	private static boolean waitingServer = false;
 
+	/**
+	 * Main function. It's explained in further details in the report.
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
+		
+		// INITIALISATION
 		
 		brick = BrickFinder.getLocal();
 		
 		SensorController sControl = new SensorController();
-	 	sControl.start();
+	 	sControl.start(); 
 		
 		LEDController.switchOff();
-		sControl.printLCD("Choose your path !", 1, 1);
+		
+		sControl.printLCD("Choose your path !", 1, 1); // the user has to choose on which side of the track the robot start. 
 		
 	 	final int button = Button.waitForAnyPress();
 		boolean menu = true;
@@ -47,44 +59,22 @@ public class MainTest {
 			}
 		}
 		
-		//msgListener = new MessageListener(brick.getName(),true);
 		sControl.printLCD(brick.getName(), 1, 1);
 		BroadcastReceiver.getInstance().addListener(msgListener);
 		BroadcastManager.getInstance().broadcast("{'name' : 'INIT'}".getBytes());
 		Pilot.init(50,38,15);
 
+		//END OF INITIALISATION
+		
 		while(true){
-			//displayStatus(); //debug method                               
-			//debug display
-//			JSONObject objDebug = new JSONObject();
-//			try{
-//				objDebug.put("name", "waitingMessage");
-//				objDebug.put("Wheelcount",Pilot.getWheelTurn());
-//				objDebug.put("isWaiting",wait);
-//				//first message sent for crossing the road
-//				BroadcastManager.getInstance().broadcast(objDebug.toString().getBytes());
-//			}catch(Exception e){
-//				
-//			}
-			//end debug
-			
-//			if(msgListener.isWaiting){
-//				if(msgListener.isCrossing){
-//					msgListener.isWaiting = false;
-//					wait = false;
-//				} else {
-//					//this function needs to be done : count number of wheels turn since orange mark is crossed
-//					//until a reference then return false which will trigger "stop" in the next condition
-//					
-//				}
-//			}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 			if(msgListener.isCrossing){
 				waitingServer = false;
 				if(Pilot.getWheelTurn()>2500){
 					msgListener.currentRoute = !msgListener.currentRoute;
 					msgListener.isCrossing = false;
 					msgListener.isWaiting = false;
-					sendMessage(false);
+					sendMessage(false); //the robot signals that he is no longer crossing the intersection
 					LEDController.switchOff();
 				}
 			}
@@ -93,26 +83,23 @@ public class MainTest {
 				Pilot.stop();
 			}else if((msgListener.isWaiting || waitingServer)	&& Pilot.waiting()){
 				Pilot.stop();
-				sendMessage(true); //request again
+				sendMessage(true); //the robot is waiting and asking the permission to cross the intersection 
 				Delay.msDelay(1000);
 		
 			}else if (Pilot.distance(5) >= 0.20f){
 				
-				if(sControl.sample.isBlue()){
-					//prevColor = Color.BLUE;
+				if(sControl.sample.isBlue()){ //the robot drive on the blue part of the track
 					Pilot.forward();
 				}else{
 					
-					if(sControl.sample.isWhite()){
-						//prevColor = Color.WHITE;
+					if(sControl.sample.isWhite()){ //the robot drive on the white part of the track
 						if(msgListener.currentRoute == false){
 							Pilot.slow_turn_right();
 						}else {
 							Pilot.turn_right();
 						}
 
-					}else if(sControl.sample.isBlack()){
-						//prevColor = Color.BLACK;
+					}else if(sControl.sample.isBlack()){ //the robot drive on the black part of the track
 						Pilot.turn_left();
 						
 					}else if(sControl.sample.isOrange()){ //the robot drive on the orange token
@@ -123,8 +110,7 @@ public class MainTest {
 							Pilot.resetWheelTurn();
 							
 							msgListener.isWaiting = true;
-							sendMessage(true); //first message
-							//waitingServer = true;
+							sendMessage(true);  // the robot is asking the server to cross the intersection
 							LEDController.blinkOrange();
 							
 						}
@@ -138,6 +124,10 @@ public class MainTest {
 		}
 	}
 	
+	/**
+	 * Send a message to the server.
+	 * @param crossRequest true if the message is a crossing request. false if it's only a status update.
+	 */
 	public static void sendMessage(boolean crossRequest){
 		JSONObject obj = new JSONObject();
 		try{
@@ -152,6 +142,10 @@ public class MainTest {
 		}
 	}
 	
+	/**
+	 * a debug function. It display the current status of the robot on his LCD screen.
+	 * It's blinking a little because of the refresh rate 
+	 */
 	public static void displayStatus(){
 		LCD.clear();
 		LCD.drawString(msgListener.name,1,1);

@@ -8,8 +8,8 @@ import lejos.utility.Delay;
 
 /**
  * Contains all functions needed to use a RGB color sensor.
- * We need to create an object and then call the function start for this object.
- *  @author rdulieu
+ * It's a runnable so it's running on a different thread than the main process.
+ *  @author Rora
  *
  */
 public class SensorController implements Runnable {
@@ -21,7 +21,7 @@ public class SensorController implements Runnable {
 	public RGBsample sample;
 
 	/**
-	 * Constructor that assign port S2 to RGBsensor
+	 * Constructor that assign port S3 to RGBsensor
 	 */
 	public SensorController() {
 		this.colorSensor = new EV3ColorSensor(SensorPort.S3);
@@ -30,7 +30,7 @@ public class SensorController implements Runnable {
 	}
 	
 	/**
-	 * 
+	 * get a RGB descriptor of the current color
 	 * @param RGBresult will contains 3 float between 0 and 1 that represents the light intensity of Red, Green and Blue lights.
 	 */
 	void getRGB(float[] RGBresult) {
@@ -38,20 +38,31 @@ public class SensorController implements Runnable {
 	}
 	
 	/**
-	 * 
-	 * @param item
+	 * a debug function that print a float on the LCD. It clear the display before printing
+	 * @param item the float to be printed 
+	 * @param x coordinate on the screen
+	 * @param y coordinate on the screen
 	 */
 	public void printLCD(float item,int x,int y) {
 		LCD.clear();
 		LCD.drawString(Float.toString(item), x, y);
 	}
 	
+	/**
+	 * a debug function that print a string on the LCD. It clear the display before printing
+	 * @param item the string to be printed 
+	 * @param x coordinate on the screen
+	 * @param y coordinate on the screen
+	 */
 	public void printLCD(String string, int x, int y) {
 		LCD.clear();
 		LCD.drawString(string, x, y);
 	}
 
-
+	/**
+	 * a debug function that print a RGB color on the LCD. It clear the display before printing
+	 * @param RGBresult is an array of float (size 3)
+	 */
 	public void printRGB(float[] RGBresult) {
 		LCD.clear();
 		LCD.drawString("R: "+Float.toString(RGBresult[0]), 0, 0);
@@ -59,21 +70,23 @@ public class SensorController implements Runnable {
 		LCD.drawString("B: "+Float.toString(RGBresult[2]), 0, 2);
 	}
 
+	/**
+	 * the method executed by the thread. It's an infinite loop that detect the color below the robot.
+	 * the main thread has to get the sample attribute to use the detected color
+	 */
 	@Override
 	public void run() {
 		for(;;){
 			float[] RGBresult = {0,0,0};
 			getRGB(RGBresult);
 			sample = new RGBsample(RGBresult);
-			//send "sample" to the other thread for using
-//			printRGB(RGBresult);
-//			LCD.drawString(Boolean.toString(sample.isWhite()), 0, 4);
-//			
-//			Delay.msDelay(2000);
 		}
 		
 	}
 		
+	/**
+	 * start the thread
+	 */
 	public void start(){
 		if(sensorThread==null){
 			sensorThread= new Thread(this);

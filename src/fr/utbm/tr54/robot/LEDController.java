@@ -1,11 +1,15 @@
 package fr.utbm.tr54.robot;
 import lejos.hardware.Button;
 
+/**
+ * Contains method for displaying colors with the LED on the robots
+ * We defined all possible colors in the attributes of this controller
+ * so it's really fast to add new methods
+ * @author Rora
+ *
+ */
 class LEDController{
 	
-	// 1/2/3: static light green/red/yellow
-	// 4/5/6: normal blinking light green/red/yellow
-	// 7/8/9: fast blinking light green/red/yellow
 	
 	public static int OFF=0;
 	
@@ -21,26 +25,44 @@ class LEDController{
 	public static int FB_RED=8;
 	public static int FB_YELLOW=9;
 	
+	/**
+	 * Switch the LED to red
+	 */
 	public static void switchRed(){
 		Button.LEDPattern(LEDController.RED);
 	}
 	
+	/**
+	 * Switch the LED to orange
+	 */
 	public static void switchOrange(){
 		Button.LEDPattern(LEDController.YELLOW);
 	}
 	
+	/**
+	 * Switch the LED to blinking orange
+	 */
 	public static void blinkOrange(){
 		Button.LEDPattern(LEDController.B_YELLOW);
 	}
 	
+	/**
+	 * Switch the LED to green
+	 */
 	public static void switchGreen(){
 		Button.LEDPattern(LEDController.GREEN);
 	}
 	
+	/**
+	 * Switch the LED to blinking red
+	 */
 	public static void blinkRed(){
 		Button.LEDPattern(LEDController.B_RED);
 	}
 	
+	/**
+	 * Switch off the LED
+	 */
 	public static void switchOff(){
 		Button.LEDPattern(LEDController.OFF);
 		

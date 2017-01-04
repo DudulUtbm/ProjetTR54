@@ -9,6 +9,12 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 import lejos.robotics.filter.MeanFilter;
 
+/**
+ * The pilot is the controller for the motors of the robot
+ * it controls the speed, rotation and start or stop the wheels
+ * @author Rora
+ *
+ */
 public class Pilot {
 
 	public static EV3LargeRegulatedMotor motor_left;
@@ -26,10 +32,11 @@ public class Pilot {
 
 
 /**
- * all parameters are linked. 75,30,65 is our base value. If you want to change one of them you have to also change the others
- * @param speed, 
- * @param turn_speed
- * @param opposite_turn_speed
+ * This method initialize the robot
+ * All parameters are linked. 50,38,15 is our base value. If you want to change one of them you may have to also change the others
+ * @param speed (in percentage) while the robot is in a straight line 
+ * @param turn_speed of the main wheel when the robot rotate (should be faster than opposite turn speed)
+ * @param opposite_turn_speed, turn speed of the second wheel when the robot rotate (slower than the main wheel)
  */
 public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
@@ -50,6 +57,10 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 	}
 
+	/**
+	 * use the ultrasonic sensor to measure a distance in front of the robot
+	 * @return an array of float that contains the distance at index 0
+	 */
 	public static float distance(){
 
         float[] sample = new float[distance_provider.sampleSize()];
@@ -59,6 +70,11 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 	}
 
+	/**
+	 * use the ultrasonic sensor to measure a distance in front of the robot
+	 * @param n
+	 * @return an array of float that contains the distance at index 0
+	 */
 	public static float distance(int n){
 
 		MeanFilter filter = new MeanFilter(distance_provider, n);
@@ -70,6 +86,10 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 	}
 
+	/**
+	 *  use the ultrasonic sensor to detect the color below the robot
+	 * @return an array of float (size 3) that contains the RGB detection of the color
+	 */
 	public static float[] color(){
 
 
@@ -81,7 +101,9 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 	}
 
-
+	/**
+	 * the robot start to drive forward
+	 */
 	public static void forward(){
 
 		motor_left.startSynchronization();
@@ -93,6 +115,9 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 	}
 	
+	/**
+	 * the robot drive forward slowly (40 % of his main speed)
+	 */
 	public static void slow_forward(){
 
 		motor_left.startSynchronization();
@@ -104,6 +129,9 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 	}
 
+	/**
+	 * the robot rotate to the right
+	 */
 	public static void turn_right(){
 
 		motor_left.startSynchronization();
@@ -118,7 +146,9 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 	}
 	
-	
+	/**
+	 * the robot rotate to the right slowly (65 % of his rotation speed)
+	 */
 	public static void slow_turn_right(){
 
 		motor_left.startSynchronization();
@@ -133,6 +163,9 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 	}
 
+	/**
+	 * the robot rotate to the left
+	 */
 	public static void turn_left(){
 
 		motor_left.startSynchronization();
@@ -147,6 +180,9 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 	}
 
+	/**
+	 * the stop his movement
+	 */
 	public static void stop(){
 
 		motor_left.startSynchronization();
@@ -156,6 +192,9 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 	}
 
+	/**
+	 * the robot drive backward
+	 */
 	public static void backward(){
 
 		motor_left.startSynchronization();
@@ -164,7 +203,12 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 		motor_left.endSynchronization();
 
 	}
-
+	
+	/**
+	 * change the current speed of the robot. It doesn't change his main speed (forward and rotation)
+	 * so it last only until the next forward, slowforward or any rotation call
+	 * @param speed_percent the new speed
+	 */
 	public static void set_speed(float speed_percent){
 
 		motor_left.startSynchronization();
@@ -174,6 +218,10 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 
 	}
 
+	/**
+	 * rotation of a precise angle
+	 * @param angle in radian
+	 */
 	public static void rotate(double angle){
 
 		motor_left.startSynchronization();
@@ -188,18 +236,25 @@ public static void init(int speed, int turn_speed, int opposite_turn_speed){
 	}
 
 	/**
-	 * we always use leftmotor for counting distance
+	 * Reset the robot's traveled distance
 	 */
 	public static void resetWheelTurn() {
 		motor_left.resetTachoCount();	
 	}
 	
+	/**
+	 * We use the Tachocount on the left motor to measure the distance traveled by the robot.
+	 * @return the traveled distance since the last call of resetWheelTurn().
+	 */
 	public static int getWheelTurn(){
 		return motor_left.getTachoCount();
 	}
 	
-	//TODO: add a parameter in pilot that count the number of turn and check here
-	//if we are over or less than a reference value that we will define by testing on the track.
+	/**
+	 * We test a boolean that tell to the robot it has to stop his movement before the intersection
+	 * the value (900) was determined by testing on the track
+	 * @return true if it has to stop
+	 */
 	public static boolean waiting(){
 		
 		return motor_left.getTachoCount() >= 900;
